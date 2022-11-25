@@ -89,8 +89,8 @@ public class DownloadFromDatabase : MonoBehaviour
 			}
 		});
 	}
-	
-	public void StreamMountData(){
+	public StringStringEvent OutputStringString;
+	public void StreamDictionaryData(){
 		DatabaseReference reference = FirebaseDatabase.Instance.GetReference(DataPath + DataLocation);
 		reference.ValueChanged += (sender, e) =>
 		{
@@ -104,28 +104,33 @@ public class DownloadFromDatabase : MonoBehaviour
 				var value = child.Value as Dictionary<string,object>;
 				if(value == null){
 					//Debug.Log("maybe childvalue is not a dictionary?");
-					output.Add(key,child.Value.ToString());
+					//therefor output string string event
+					//output.Add(key,child.Value.ToString());
+					OutputStringString.Invoke(key,child.Value.ToString());
 					
 				} else {
 					//Debug.Log("maybe childvalue IS a dictionary?");
-					//output = new Dictionary<string, string>();
+					//therefor output as dictionary
+					//but what do with key?
+					//perforce we output as a named dictionary
 					foreach(var val in value){
-						//Debug.Log(val.Key + " " + val.Value,gameObject);
+						
 						if(val.Value.GetType()==typeof(string)){
 							output.Add(val.Key,(string)val.Value);	
 						} else {
 							var newVal = val.Value as Dictionary<string,object>;
-							//Debug.Log(newVal);
+							
 							foreach(var v in newVal){
 								output.Add(v.Key,(string)v.Value);
 							}
 						}
 						
 					}
-				}
-				Debug.Log(gameObject,gameObject);
+					Debug.Log(gameObject,gameObject);
 			
-				DictionaryEvent.Invoke(output);
+					DictionaryEvent.Invoke(output);
+				}
+				
 			}
 		};
 		reference.DatabaseError += (sender,e)=>{
